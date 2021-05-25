@@ -1,6 +1,7 @@
 ﻿using RestrauntRaterAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,6 +13,8 @@ namespace RestrauntRaterAPI.Controllers
     public class RestaurantController : ApiController
     {
         private RestaurantDbContext _context = new RestaurantDbContext();
+
+        [HttpPost]
         public async Task<IHttpActionResult> PostRestaurant(Restaurant model)
         {
             if (model == null)
@@ -27,5 +30,46 @@ namespace RestrauntRaterAPI.Controllers
             }
             return BadRequest(ModelState);
         }
+
+        [HttpGet]
+        public async Task<IHttpActionResult> GetAll()
+        {
+            List<Restaurant> restaurants = await _context.Restaurants.ToListAsync();
+            return Ok(restaurants);
+        }
+
+        [HttpGet]
+        public async Task<IHttpActionResult> GetById(int id)
+        {
+            Restaurant restaurant = await _context.Restaurants.FindAsync(id);
+
+            if (restaurant != null)
+            {
+                return Ok(restaurant);
+            }
+            return NotFound();
+        }
+
+        [HttpPut]
+        public async Task<IHttpActionResult> UpdateRestaurant(int id, Restaurant updatedRestaurant)
+        {
+            if (ModelState.IsValid)
+            {
+                Restaurant restaurant = await _context.Restaurants.FindAsync(id);
+
+                if (restaurant != null)
+                {
+                    restaurant.Name = updatedRestaurant.Name;
+                    restaurant.Address = updatedRestaurant.Address;
+                    restaurant.Rating = updatedRestaurant.Rating;
+
+                    await _context.SaveChangesAsync();
+                    return Ok();
+                }
+                return NotFound();
+            }
+            return BadRequest(ModelState);
+        }
+
     }
 }
