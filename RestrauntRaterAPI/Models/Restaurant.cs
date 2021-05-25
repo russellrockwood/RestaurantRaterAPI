@@ -31,6 +31,10 @@ namespace RestrauntRaterAPI.Models
                 return totalAverageRating / Ratings.Count;
             }
         }
+
+        //AverageFoodScore
+        //AverageEnvironmentalscore
+        //AveragecleanScore
         public bool IsRecommended => Rating > 8.5;
     }
 }
